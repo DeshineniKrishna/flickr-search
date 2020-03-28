@@ -3,13 +3,10 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
-import Headroom from 'react-headroom'
 
 ReactDOM.render(
   <React.StrictMode>
     <App/>
-      {/* <Headroom/>
-      <App/> */}
   </React.StrictMode>,
   document.getElementById('root')
 );
