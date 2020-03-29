@@ -15,9 +15,9 @@ class App extends Component {
   
     this.state = {
        imagegallery : [],
-       search : "football",
+       search : "cats",
        isLoading : true,
-       perpage : 10,
+       perpage : 1000,
     }
   }
 
@@ -33,7 +33,7 @@ class App extends Component {
               var imgsrcpath = `https://farm${pic.farm}.staticflickr.com/${pic.server}/${pic.id}_${pic.secret}.jpg`;
               return(
                 <div className="images">
-                  <img className="img" src={imgsrcpath} alt="pics" ></img>
+                  <img className="img" src={imgsrcpath} alt={pic.title} ></img>
                 </div>
               )
           })
@@ -56,23 +56,17 @@ class App extends Component {
       <div className="app-container">
         <div className="main-container">
 
-          <div className="header">
-            <Headroom className="headroom">
-              <Header/>
-            </Headroom>
-          </div>
+          <Headroom className="headroom">
+            <Header/>
+          </Headroom>
 
-          {/* {isLoading && <h3> Loading ... </h3>}
+          {isLoading && <h3> Loading ... </h3>}
           {
             !isLoading && (
             <div className="content">
             <Content imagegallery={imagegallery}/>
             </div> )
-          } */}
-
-          <div className="content">
-            <Content imagegallery={imagegallery}/>
-          </div>
+          }
 
         </div>        
       </div>
