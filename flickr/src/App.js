@@ -19,11 +19,12 @@ class App extends Component {
        isLoading : true,
        perpage : 1000,
        open : false,
+       srcpath :"",
     }
   }
 
-  onOpenModal = () => {
-    this.setState({ open: true });
+  onOpenModal = (arg) => {
+    this.setState({ open: true, srcpath: arg });
   };
 
   onCloseModal = () => {
@@ -42,11 +43,7 @@ class App extends Component {
               var imgsrcpath = `https://farm${pic.farm}.staticflickr.com/${pic.server}/${pic.id}_${pic.secret}.jpg`;
               return(
                 <div>
-                  <div onClick={this.onOpenModal}>
-                    <Modal open={this.state.open} onClose={this.onCloseModal} center>
-                            <img src={imgsrcpath} alt="asf"></img>
-                    </Modal>
-
+                  <div onClick={this.onOpenModal} imgsrcpath={imgsrcpath}>
                     <div className="images">
                         <img className="img" src={imgsrcpath} alt={pic.title} ></img>
                     </div>
@@ -76,6 +73,10 @@ class App extends Component {
           <Headroom className="headroom">
             <Header/>
           </Headroom>
+
+          <Modal open={this.state.open} onClose={this.onCloseModal} center>
+              <img src={this.state.srcpath} alt="asf"></img>
+          </Modal>
 
           {isLoading && <h3> Loading ... </h3>}
           {
