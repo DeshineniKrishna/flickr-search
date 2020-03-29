@@ -2,69 +2,24 @@ import React, { Component } from 'react'
 
 class Content extends Component {
 
+    constructor(props) {
+        super(props)
+    
+        this.state = {
+             
+        }
+    }
+    
+
     render() {
 
         const {imagegallery} = this.props
 
         return (
             <div>
-                {imagegallery}
-                <div>content</div>
-                <div>content</div>
-                <div>content</div>
-                <div>content</div>
-                <div>content</div>
-                <div>content</div>
-                <div>content</div>
-                <div>content</div>
-                <div>content</div>
-                <div>content</div>
-                <div>content</div>
-                <div>content</div>
-                <div>content</div>
-                <div>content</div>
-                <div>content</div>
-                <div>content</div>
-                <div>content</div>
-                <div>content</div>
-                <div>content</div>
-                <div>content</div>
-                <div>content</div>
-                <div>content</div>
-                <div>content</div>
-                <div>content</div>
-                <div>content</div>
-                <div>content</div>
-                <div>content</div>
-                <div>content</div>
-                <div>content</div>
-                <div>content</div>
-                <div>content</div>
-                <div>content</div>
-                <div>content</div>
-                <div>content</div>
-                <div>content</div>
-                <div>content</div>
-                <div>content</div>
-                <div>content</div>
-                <div>content</div>
-                <div>content</div>
-                <div>content</div>
-                <div>content</div>
-                <div>content</div>
-                <div>content</div>
-                <div>content</div>
-                <div>content</div>
-                <div>content</div>
-                <div>content</div>
-                <div>content</div>
-                <div>content</div>
-                <div>content</div>
-                <div>content</div>
-                <div>content</div>
-                <div>content</div>
-                <div>content</div>
-                <div>content</div>
+                <div className="editimages">
+                    {imagegallery}
+                </div> 
             </div>
         )
     }
