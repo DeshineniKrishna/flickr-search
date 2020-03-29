@@ -11,6 +11,7 @@
     "react-axios": "^2.0.3",
     "react-dom": "^16.13.1",
     "react-headroom": "^3.0.0",
+    "react-responsive-modal": "^4.0.1",
     "react-scripts": "3.4.1",
     "reactstrap": "^8.4.1"
   },
