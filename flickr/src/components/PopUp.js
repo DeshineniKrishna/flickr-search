@@ -1,42 +1,28 @@
-import React, { Component } from 'react'
-import Modal from 'react-responsive-modal';
-
-class PopUp extends Component {
+// import React, { Component } from 'react'
 
 
-    constructor(props) {
-        super(props)
+// class PopUp extends Component {
+
+
+//     constructor(props) {
+//         super(props)
     
-        this.state = {
-            open : false,
-        }
-    }
+//         this.state = {
+            
+//         }
+//     }
     
-    onOpenModal = () => {
-        this.setState({ open: true });
-      };
     
-    onCloseModal = () => {
-        this.setState({ open: false });
-      };
 
-    render() {
+//     render() {
 
-        const {imgsrcpath,pictitle} = this.props;
-        const {open} = this.state;
+//         const {imgsrcpath,pictitle} = this.props;
+//         const {open} = this.state;
 
-        return (
-            <div onClick={this.onOpenModal}>
-                <Modal open={open} onClose={this.onCloseModal} center>
-                        <img src={imgsrcpath} alt="asf"></img>
-                </Modal>
+//         return (
 
-                <div className="images">
-                    <img className="img" src={imgsrcpath} alt={pictitle} ></img>
-                </div>
-            </div>
-        )
-    }
-}
+//         )
+//     }
+// }
 
-export default PopUp
+// export default PopUp
