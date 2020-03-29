@@ -20,7 +20,6 @@ class App extends Component {
        perpage : 10,
        open : false,
        srcpath :"",
-
     }
   }
 
@@ -40,7 +39,18 @@ class App extends Component {
       console.log("DATA: ",res);
       return res.data;
     }).then((data) => {
-          let picArr = data.photos.photo
+          let picArr = data.photos.photo.map((pic) => {
+              const imgsrcpath = `https://farm${pic.farm}.staticflickr.com/${pic.server}/${pic.id}_${pic.secret}.jpg`;
+              return(
+                <div>
+                  <div onClick={this.onOpenModal(`https://farm${pic.farm}.staticflickr.com/${pic.server}/${pic.id}_${pic.secret}.jpg`)}>
+                    <div className="images">
+                        <img className="img" src={`https://farm${pic.farm}.staticflickr.com/${pic.server}/${pic.id}_${pic.secret}.jpg`} alt={pic.title} ></img>
+                    </div>
+                  </div>     
+                </div>
+              )
+          })
           this.setState({
             isLoading: false,
             imagegallery : picArr,
@@ -68,28 +78,13 @@ class App extends Component {
               <img src={this.state.srcpath} alt="asf"></img>
           </Modal>
 
-          {
-            imagegallery.map((pic) => {
-              var imgsrcpath = `https://farm${pic.farm}.staticflickr.com/${pic.server}/${pic.id}_${pic.secret}.jpg`;
-              return(
-                <div>
-                  <div onClick={this.onOpenModal(imgsrcpath)}>
-                    <div className="images">
-                        <img className="img" src={imgsrcpath} alt={pic.title} ></img>
-                    </div>
-                  </div>     
-                </div>
-              )
-          })
-          }
-
-          {/* {isLoading && <h3> Loading ... </h3>}
+          {isLoading && <h3> Loading ... </h3>}
           {
             !isLoading && (
             <div className="content">
             <Content imagegallery={imagegallery}/>
             </div> )
-          } */}
+          }
         </div>        
       </div>
     )
