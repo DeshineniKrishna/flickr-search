@@ -23,8 +23,9 @@ class App extends Component {
     }
   }
 
-  onOpenModal = (arg) => {
-    this.setState({ open: true, srcpath: arg });
+  onOpenModal = (imgsrcpath) => {
+    _ => 
+    this.setState({ open: true, srcpath: imgsrcpath });
   };
 
   onCloseModal = () => {
@@ -43,7 +44,7 @@ class App extends Component {
               var imgsrcpath = `https://farm${pic.farm}.staticflickr.com/${pic.server}/${pic.id}_${pic.secret}.jpg`;
               return(
                 <div>
-                  <div onClick={this.onOpenModal} imgsrcpath={imgsrcpath}>
+                  <div onClick={this.onOpenModal({imgsrcpath})}>
                     <div className="images">
                         <img className="img" src={imgsrcpath} alt={pic.title} ></img>
                     </div>
