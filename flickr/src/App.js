@@ -81,17 +81,15 @@ class App extends Component {
                 </div>
               )
           })
-              
-            })
           }
 
-          {isLoading && <h3> Loading ... </h3>}
+          {/* {isLoading && <h3> Loading ... </h3>}
           {
             !isLoading && (
             <div className="content">
             <Content imagegallery={imagegallery}/>
             </div> )
-          }
+          } */}
         </div>        
       </div>
     )
