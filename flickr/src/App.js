@@ -43,25 +43,24 @@ class App extends Component {
 
     const URL = `https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=${API_KEY}&tags=${search}&page=${this.state.page}&format=json&nojsoncallback=1`;
 
-    axios.get(URL).then((res) => {
+     axios.get(URL)
+                  .then((res) => {
       (this.state.search === "") ? console.log("cats") : console.log(this.state.search+"desi");
       console.log("DATA: ",res);
       return res.data;
-    }).then((data) => {
-          let picArr = data.photos.photo.map((pic) => {
-              var imgsrcpath = `https://farm${pic.farm}.staticflickr.com/${pic.server}/${pic.id}_${pic.secret}.jpg`;
-              return(
-                <div className="images" onClick={() => this.show(imgsrcpath,pic.title)}>
-                    <img className="img" src={imgsrcpath} alt={pic.title} ></img>
-                </div>
-              )
-          })
-          return picArr;
-          // console.log(picArr);
-          // this.setState({
-          //   isLoading: false,
-          //   imagegallery : picArr,
-          // });
+      }).then((data) => {
+            if(data.photos.photo.length !== 0){
+              let picArr = data.photos.photo.map((pic) => {
+                var imgsrcpath = `https://farm${pic.farm}.staticflickr.com/${pic.server}/${pic.id}_${pic.secret}.jpg`;
+                return(
+                  <div className="images" onClick={() => this.show(imgsrcpath,pic.title)}>
+                      <img className="img" src={imgsrcpath} alt={pic.title} ></img>
+                  </div>
+                )
+            })
+            console.log(picArr);
+            return picArr;
+          }
           // console.log(this.state.imagegallery);
     }).catch((err) => {
       if(err){
@@ -71,8 +70,12 @@ class App extends Component {
 
   }
 
-  componentDidMount(){
-      let images = this.LoadPics("cats");
+  async componentDidMount(){
+      let images = await this.LoadPics("cats");
+      this.setState({
+        isLoading: false,
+        imagegallery : images,
+      });
 
       console.log("check"+images);
       
@@ -82,13 +85,14 @@ class App extends Component {
 
     const {isLoading,imagegallery} = this.state;
 
+    console.log(this.state.imagegallery)
+
     return (
       <div className="app-container">
         <div className="main-container">
 
           <Headroom className="headroom">
-            {/* <Header/> */}
-            <header>
+          <header>
                 <label className="container">
                     <input 
                           className="searchbar" 
