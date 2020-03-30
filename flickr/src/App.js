@@ -57,12 +57,12 @@ class App extends Component {
               )
           })
           return picArr;
-         // console.log(picArr);
+          // console.log(picArr);
           // this.setState({
           //   isLoading: false,
           //   imagegallery : picArr,
           // });
-          // console.log(this.state.imagegallery); 
+          // console.log(this.state.imagegallery);
     }).catch((err) => {
       if(err){
         console.error("Cannot fetch data from API, ", err);        
@@ -72,7 +72,10 @@ class App extends Component {
   }
 
   componentDidMount(){
-    this.LoadPics("cats");  
+      let images = this.LoadPics("cats");
+
+      console.log("check"+images);
+      
   }
 
   render() {
