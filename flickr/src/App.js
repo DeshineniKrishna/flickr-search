@@ -17,6 +17,7 @@ class App extends Component {
     super(props)
   
     this.state = {
+       data: [], 
        imagegallery : [],
        isLoading : true,
        imgsource: "",
@@ -48,14 +49,35 @@ class App extends Component {
 
     let res = await axios.get(URL);    
 
-    let data = await res.data.photos.photo;
+    let data = await res.data.photos;
     return data;
+
   }
+
 
   LoadPics = (search) => {
 
     let data = this.fetchdata(search);
-    console.log(data);
+
+    data
+    .then( () =>{
+      this.setState({data:data});     
+    }).catch((err) => {
+      if(err){
+        console.error("Cannot fetch data from API, ", err);        
+      }
+    })
+
+    setTimeout(() => {
+        console.log(data);
+        return data;
+    }, 2000);
+
+    // this.setState({
+    //   data: data,
+    // })
+
+    // console.log(this.state.data.photos)
 
     // const URL = `https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=${API_KEY}&tags=${search}&page=${this.state.page}&format=json&nojsoncallback=1`;
 
@@ -78,7 +100,8 @@ class App extends Component {
     //         return picArr;
     //       }
     //       // console.log(this.state.imagegallery);
-    // }).catch((err) => {
+    // })
+    // .catch((err) => {
     //   if(err){
     //     console.error("Cannot fetch data from API, ", err);        
     //   }
@@ -92,8 +115,10 @@ class App extends Component {
         isLoading: false,
         imagegallery : images,
       });
+      setTimeout(() => {
+        console.log("check"+images);        
+      }, 3000);
 
-      console.log("check"+images);
       
   }
 
