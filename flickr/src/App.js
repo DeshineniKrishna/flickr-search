@@ -1,10 +1,8 @@
 import React, { Component } from 'react'
 import './App.css';
 import axios from 'axios';
-// import Header from './components/Header/Index';
 import Content from './components/Content/Index';
 import Headroom from 'react-headroom';
-// import Modal from 'react-responsive-modal';
 import Rodal from 'rodal';
 import 'rodal/lib/rodal.css';
 import Loader from './images/loader.gif'
@@ -17,14 +15,14 @@ class App extends Component {
     super(props)
   
     this.state = {
-       data: [], 
+       data: {}, 
        imagegallery : [],
        isLoading : true,
        imgsource: "",
        imagetitle: "",
        visible: false,
        page : 1,
-       search:"",
+       search:"cats",
     }
   }
 
@@ -40,93 +38,72 @@ class App extends Component {
   //   this.setState({ search: query });
   // }
 
-  // const promise1 = 
-
-
   async fetchdata(search){
-
     let URL = `https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=${API_KEY}&tags=${search}&page=${this.state.page}&format=json&nojsoncallback=1`;
-
-    let res = await axios.get(URL);    
-
+    let res = await axios.get(URL);
     let data = await res.data.photos;
     return data;
-
   }
 
-
-  LoadPics = (search) => {
-
-    let data = this.fetchdata(search);
-
-    data
-    .then( () =>{
-      this.setState({data:data});     
-    }).catch((err) => {
-      if(err){
-        console.error("Cannot fetch data from API, ", err);        
-      }
+  LoadPics =  async(search) => {
+    let data = await this.fetchdata(search);    
+    this.setState({
+      data:data,
+    });
+    let picArr = this.state.data.photo.map((pic) => {
+      var imgsrcpath = `https://farm${pic.farm}.staticflickr.com/${pic.server}/${pic.id}_${pic.secret}.jpg`;
+      return(
+        <div key={pic.secret} className="images" onClick={() => this.show(imgsrcpath,pic.title)}>
+            <img key={pic.secret + pic.id} className="img" src={imgsrcpath} alt={pic.title} ></img>
+        </div>
+      )
     })
-
-    setTimeout(() => {
-        console.log(data);
-        return data;
-    }, 2000);
-
-    // this.setState({
-    //   data: data,
-    // })
-
-    // console.log(this.state.data.photos)
-
-    // const URL = `https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=${API_KEY}&tags=${search}&page=${this.state.page}&format=json&nojsoncallback=1`;
-
-    //  axios.get(URL)
-    //               .then((res) => {
-    //   (this.state.search === "") ? console.log("cats") : console.log(this.state.search+"desi");
-    //   console.log("DATA: ",res);
-    //   return res.data;
-    //   }).then((data) => {
-    //         if(data.photos.photo.length !== 0){
-    // let picArr = data.map((pic) => {
-    //   var imgsrcpath = `https://farm${pic.farm}.staticflickr.com/${pic.server}/${pic.id}_${pic.secret}.jpg`;
-    //   return(
-    //     <div className="images" onClick={() => this.show(imgsrcpath,pic.title)}>
-    //         <img className="img" src={imgsrcpath} alt={pic.title} ></img>
-    //     </div>
-    //   )
-    // })
-    //         console.log(picArr);
-    //         return picArr;
-    //       }
-    //       // console.log(this.state.imagegallery);
-    // })
-    // .catch((err) => {
-    //   if(err){
-    //     console.error("Cannot fetch data from API, ", err);        
-    //   }
-    // })
-
+    return picArr;
   }
 
-  componentDidMount(){
-      let images = this.LoadPics("cats");
+  loadMore = async() => {
+    this.setState({
+      page: this.state.page + 1,
+      isLoading: true,
+      // loading: <Loader type="pacman" />
+    });
+
+    let imageArray = await this.LoadPics(this.state.search);
+    if (imageArray) {
+      let newArray = this.state.imagegallery.concat(imageArray);
+      this.setState({
+        isLoading: false,
+        imagegallery: newArray
+      });
+    }
+    // this.setState({ isLoading: false });
+  };
+
+  handleScroll = () => {
+    if (
+      window.innerHeight + window.scrollY + 200 >=
+      document.body.offsetHeight
+    ) {
+      this.loadMore();
+    }
+  };
+
+  async componentDidMount(){
+      let images = await this.LoadPics(this.state.search);
       this.setState({
         isLoading: false,
         imagegallery : images,
       });
-      setTimeout(() => {
-        console.log("check"+images);        
-      }, 3000);
+      window.addEventListener("scroll", this.handleScroll);  
+  }
 
-      
+  componentWillUnmount() {
+    window.removeEventListener("scroll", this.handleScroll);
   }
 
   render() {
 
     const {isLoading,imagegallery} = this.state;
-
-    // console.log(this.state.imagegallery)
 
     return (
       <div className="app-container">
