@@ -1,10 +1,13 @@
 import React, { Component } from 'react'
 import './App.css';
 import axios from 'axios';
-import Header from './components/Header/Index';
+// import Header from './components/Header/Index';
 import Content from './components/Content/Index';
 import Headroom from 'react-headroom';
-import Modal from 'react-responsive-modal';
+// import Modal from 'react-responsive-modal';
+import Rodal from 'rodal';
+import 'rodal/lib/rodal.css';
+import Loader from './images/loader.gif'
 
 const API_KEY = "ddc5d1ba3cdaab1b91800104a69f31eb";
 
@@ -15,53 +18,66 @@ class App extends Component {
   
     this.state = {
        imagegallery : [],
-       search : "cats",
        isLoading : true,
-       perpage : 10,
-       open : false,
-       srcpath :"",
+       imgsource: "",
+       imagetitle: "",
+       visible: false,
+       page : 1,
+       search:"",
     }
   }
 
-  onOpenModal = (imgsrcpath) => {
-    this.setState({ open: true, srcpath: imgsrcpath });
-  };
+  show = (imgsrcpath,title) => {
+    this.setState({ visible: true , imgsource : imgsrcpath, imagetitle : title });
+  }
+ 
+  hide() {
+    this.setState({ visible: false });
+  }
 
-  onCloseModal = () => {
-    this.setState({ open: false });
-  };
+  // updateSearch = (query) => {
+  //   this.setState({ search: query });
+  // }
 
-  componentDidMount(){
+  LoadPics = (search) => {
 
-   const URL = `https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=${API_KEY}&tags=${this.state.search}&per_page=${this.state.perpage}&page=1&format=json&nojsoncallback=1`
+    const URL = `https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=${API_KEY}&tags=${search}&page=${this.state.page}&format=json&nojsoncallback=1`;
 
     axios.get(URL).then((res) => {
+      (this.state.search === "") ? console.log("cats") : console.log(this.state.search+"desi");
       console.log("DATA: ",res);
       return res.data;
     }).then((data) => {
           let picArr = data.photos.photo.map((pic) => {
-              const imgsrcpath = `https://farm${pic.farm}.staticflickr.com/${pic.server}/${pic.id}_${pic.secret}.jpg`;
+              var imgsrcpath = `https://farm${pic.farm}.staticflickr.com/${pic.server}/${pic.id}_${pic.secret}.jpg`;
               return(
-                <div>
-                  <div onClick={this.onOpenModal(`https://farm${pic.farm}.staticflickr.com/${pic.server}/${pic.id}_${pic.secret}.jpg`)}>
-                    <div className="images">
-                        <img className="img" src={`https://farm${pic.farm}.staticflickr.com/${pic.server}/${pic.id}_${pic.secret}.jpg`} alt={pic.title} ></img>
-                    </div>
-                  </div>     
+                <div className="images" onClick={() => this.show(imgsrcpath,pic.title)}>
+                    <img className="img" src={imgsrcpath} alt={pic.title} ></img>
                 </div>
               )
           })
-          this.setState({
-            isLoading: false,
-            imagegallery : picArr,
-          });
+          return picArr;
+          // console.log(picArr);
+          // this.setState({
+          //   isLoading: false,
+          //   imagegallery : picArr,
+          // });
+          // console.log(this.state.imagegallery);
     }).catch((err) => {
       if(err){
         console.error("Cannot fetch data from API, ", err);        
       }
     })
+
   }
-  
+
+  async componentDidMount(){
+      let images = await this.LoadPics("cats");
+
+      console.log("desi"+images);
+      
+  }
+
   render() {
 
     const {isLoading,imagegallery} = this.state;
@@ -71,20 +87,41 @@ class App extends Component {
         <div className="main-container">
 
           <Headroom className="headroom">
-            <Header/>
+            {/* <Header/> */}
+            <header>
+                <label className="container">
+                    <input 
+                          className="searchbar" 
+                          type="text" 
+                          placeholder="Type something to search..." 
+                          // value={this.state.search}
+                          // onChange={this.updateSearch}
+                    />
+                </label>
+            </header>
           </Headroom>
 
-          <Modal open={this.state.open} onClose={this.onCloseModal} center>
-              <img src={this.state.srcpath} alt="asf"></img>
-          </Modal>
-
-          {isLoading && <h3> Loading ... </h3>}
+          {
+            isLoading && 
+            <div className="Loading">
+                <img src={Loader} alt="Loading..."/>
+            </div>
+            
+          }
           {
             !isLoading && (
             <div className="content">
             <Content imagegallery={imagegallery}/>
             </div> )
           }
+
+          <Rodal visible={this.state.visible} onClose={this.hide.bind(this)}>
+            <div className="zoomimages">
+              <img className="imageszoomed" src={this.state.imgsource} alt={this.state.imagetitle}/>
+              <h2 className="titledisplay"> {this.state.imagetitle} </h2>
+            </div>
+          </Rodal>
+
         </div>        
       </div>
     )
