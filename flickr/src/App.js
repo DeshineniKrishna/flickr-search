@@ -39,39 +39,55 @@ class App extends Component {
   //   this.setState({ search: query });
   // }
 
+  // const promise1 = 
+
+
+  async fetchdata(search){
+
+    let URL = `https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=${API_KEY}&tags=${search}&page=${this.state.page}&format=json&nojsoncallback=1`;
+
+    let res = await axios.get(URL);    
+
+    let data = await res.data.photos.photo;
+    return data;
+  }
+
   LoadPics = (search) => {
 
-    const URL = `https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=${API_KEY}&tags=${search}&page=${this.state.page}&format=json&nojsoncallback=1`;
+    let data = this.fetchdata(search);
+    console.log(data);
 
-     axios.get(URL)
-                  .then((res) => {
-      (this.state.search === "") ? console.log("cats") : console.log(this.state.search+"desi");
-      console.log("DATA: ",res);
-      return res.data;
-      }).then((data) => {
-            if(data.photos.photo.length !== 0){
-              let picArr = data.photos.photo.map((pic) => {
-                var imgsrcpath = `https://farm${pic.farm}.staticflickr.com/${pic.server}/${pic.id}_${pic.secret}.jpg`;
-                return(
-                  <div className="images" onClick={() => this.show(imgsrcpath,pic.title)}>
-                      <img className="img" src={imgsrcpath} alt={pic.title} ></img>
-                  </div>
-                )
-            })
-            console.log(picArr);
-            return picArr;
-          }
-          // console.log(this.state.imagegallery);
-    }).catch((err) => {
-      if(err){
-        console.error("Cannot fetch data from API, ", err);        
-      }
-    })
+    // const URL = `https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=${API_KEY}&tags=${search}&page=${this.state.page}&format=json&nojsoncallback=1`;
+
+    //  axios.get(URL)
+    //               .then((res) => {
+    //   (this.state.search === "") ? console.log("cats") : console.log(this.state.search+"desi");
+    //   console.log("DATA: ",res);
+    //   return res.data;
+    //   }).then((data) => {
+    //         if(data.photos.photo.length !== 0){
+    // let picArr = data.map((pic) => {
+    //   var imgsrcpath = `https://farm${pic.farm}.staticflickr.com/${pic.server}/${pic.id}_${pic.secret}.jpg`;
+    //   return(
+    //     <div className="images" onClick={() => this.show(imgsrcpath,pic.title)}>
+    //         <img className="img" src={imgsrcpath} alt={pic.title} ></img>
+    //     </div>
+    //   )
+    // })
+    //         console.log(picArr);
+    //         return picArr;
+    //       }
+    //       // console.log(this.state.imagegallery);
+    // }).catch((err) => {
+    //   if(err){
+    //     console.error("Cannot fetch data from API, ", err);        
+    //   }
+    // })
 
   }
 
-  async componentDidMount(){
-      let images = await this.LoadPics("cats");
+  componentDidMount(){
+      let images = this.LoadPics("cats");
       this.setState({
         isLoading: false,
         imagegallery : images,
@@ -85,7 +101,7 @@ class App extends Component {
 
     const {isLoading,imagegallery} = this.state;
 
-    console.log(this.state.imagegallery)
+    // console.log(this.state.imagegallery)
 
     return (
       <div className="app-container">
