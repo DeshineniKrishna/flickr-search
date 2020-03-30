@@ -57,12 +57,12 @@ class App extends Component {
               )
           })
           return picArr;
-          // console.log(picArr);
+         // console.log(picArr);
           // this.setState({
           //   isLoading: false,
           //   imagegallery : picArr,
           // });
-          // console.log(this.state.imagegallery);
+          // console.log(this.state.imagegallery); 
     }).catch((err) => {
       if(err){
         console.error("Cannot fetch data from API, ", err);        
@@ -71,11 +71,8 @@ class App extends Component {
 
   }
 
-  async componentDidMount(){
-      let images = await this.LoadPics("cats");
-
-      console.log("desi"+images);
-      
+  componentDidMount(){
+    this.LoadPics("cats");  
   }
 
   render() {
