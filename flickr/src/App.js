@@ -2,10 +2,12 @@ import React, { Component } from 'react'
 import './App.css';
 import axios from 'axios';
 
-import Header from './components/Header/Index';
+// import Header from './components/Header/Index';
 import Content from './components/Content/Index';
-import Modal from './components/Modal/Modal'
-import Loader from './images/loader.gif'
+import Modal from './components/Modal/Modal';
+import Loader from './images/loader.gif';
+import Headroom from 'react-headroom';
+import Autosuggest from 'react-autosuggest';
 
 const API_KEY = "ddc5d1ba3cdaab1b91800104a69f31eb";
 
@@ -23,6 +25,8 @@ class App extends Component {
        visible: false,
        page : 1,
        search:"",
+       suggestions: [],
+       value : "",
     }
   }
 
@@ -81,7 +85,7 @@ class App extends Component {
       this.loadMore();
     }
   };
-
+ 
   async componentDidMount(){
       let images = await this.LoadPics(("cats"));
       this.setState({
@@ -121,9 +125,16 @@ class App extends Component {
       local_storage.push(e);
       window.localStorage.setItem("local_storage", JSON.stringify(local_storage));   
     }
+    
   }
 
   updateSearch = async(e) => {
+
+    console.log("check-1");
+    this.setState({
+      value: e.target.value,
+    });
+    console.log(this.state.value);
 
     if(e.target.value === ""){
       await this.setState({
@@ -153,11 +164,31 @@ class App extends Component {
 
   render() {
 
-    const {isLoading,imagegallery,visible} = this.state;
+    const {isLoading,imagegallery,visible,value} = this.state;
+
+    const {update} = this.updateSearch;
 
     return (
       <div className="app-container">
-          <Header updateSearch={this.updateSearch} />
+
+            <Headroom className="headroom">
+                <header>
+                    <label htmlFor="searching" className="container">
+                        <Autosuggest
+                            inputProps = {{
+                                placeholder : "Type something to search..." ,
+                                type : "text",
+                                value,
+                                className : "searchbar",
+                                autoComplete : "abcd",
+                                id : "searching",
+                                onChange : update,
+                            }}
+                            suggestions={this.state.suggestions}
+                        />
+                    </label>
+                </header>
+            </Headroom>
           
           {  isLoading && 
             <div className="Loading">
