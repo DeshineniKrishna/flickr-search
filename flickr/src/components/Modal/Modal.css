@@ -1,0 +1,26 @@
+.zoomimages{
+    /* width: 80%;
+    height: 80%; */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.imageszoomed{
+    /* width: 60%;
+    height: 60%;
+    object-fit: cover; */
+    border-style: none;
+}
+
+.titledisplay{
+    display: block;
+    margin-block-start: 1.33em;
+    margin-block-end: 1.33em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    font-weight: bold;
+    text-align: center;
+    font-family: Montserrat,sans-serif;
+}

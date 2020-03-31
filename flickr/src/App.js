@@ -1,10 +1,10 @@
 import React, { Component } from 'react'
 import './App.css';
 import axios from 'axios';
+
+import Header from './components/Header/Index';
 import Content from './components/Content/Index';
-import Headroom from 'react-headroom';
-import Rodal from 'rodal';
-import 'rodal/lib/rodal.css';
+import Modal from './components/Modal/Modal'
 import Loader from './images/loader.gif'
 
 const API_KEY = "ddc5d1ba3cdaab1b91800104a69f31eb";
@@ -153,25 +153,14 @@ class App extends Component {
 
   render() {
 
-    const {isLoading,imagegallery} = this.state;
+    const {isLoading,imagegallery,visible} = this.state;
 
     return (
       <div className="app-container">
         <div className="main-container">
 
-          <Headroom className="headroom">
-          <header>
-                <label className="container">
-                    <input 
-                          className="searchbar" 
-                          type="text" 
-                          placeholder="Type something to search..." 
-                          // value={this.state.search}
-                          onChange={this.updateSearch}
-                    />
-                </label>
-            </header>
-          </Headroom>
+
+          <Header updateSearch={this.updateSearch} />
 
           {
             isLoading && 
@@ -183,13 +172,11 @@ class App extends Component {
           <div className="content" min-height="100vh" >
           <Content imagegallery={imagegallery}/>
           </div>
-          
-          <Rodal width={"100vw"} height={"100vh"} visible={this.state.visible} onClose={this.hide.bind(this)}>
-            <div className="zoomimages">
-              <img className="imageszoomed" src={this.state.imgsource} alt={this.state.imagetitle}/>
-              <h2 className="titledisplay"> {this.state.imagetitle} </h2>
-            </div>
-          </Rodal>
+
+          <Modal 
+                 visible={visible} onClose={this.hide.bind(this)}
+                 src={this.state.imgsource} alt={this.state.imagetitle}
+          />
 
         </div>        
       </div>
