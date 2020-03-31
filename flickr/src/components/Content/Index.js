@@ -3,15 +3,6 @@ import './Style.css'
 
 class Content extends Component {
 
-    constructor(props) {
-        super(props)
-    
-        this.state = {
-             
-        }
-    }
-    
-
     render() {
         const {imagegallery} = this.props
         return (
