@@ -39,12 +39,6 @@
     transition: transform 0.5s ease;
 }
 
-/* .content{
-    background-image: url(./images/background.png);
-    min-width: 100vw; 
-    min-height: 100vh,
-} */
-
 .Loading{
     display: flex;
     flex-direction: column;

@@ -157,20 +157,16 @@ class App extends Component {
 
     return (
       <div className="app-container">
-        <div className="main-container">
-
-
           <Header updateSearch={this.updateSearch} />
-
-          {
-            isLoading && 
+          
+          {  isLoading && 
             <div className="Loading">
                 <img src={Loader} alt="Loading..."/>
             </div>           
           }
 
           <div className="content" min-height="100vh" >
-          <Content imagegallery={imagegallery}/>
+            <Content imagegallery={imagegallery}/>
           </div>
 
           <Modal 
@@ -178,7 +174,6 @@ class App extends Component {
                  src={this.state.imgsource} alt={this.state.imagetitle}
           />
 
-        </div>        
       </div>
     )
   }

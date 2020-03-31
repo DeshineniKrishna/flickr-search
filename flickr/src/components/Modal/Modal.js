@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import './Modal.css'
 
 import Rodal from 'rodal';
 import 'rodal/lib/rodal.css';
