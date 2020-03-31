@@ -111,9 +111,16 @@ class App extends Component {
       window.localStorage.setItem("local_storage", JSON.stringify(local_storage));
       return;
     }
-    local_storage = JSON.parse(window.localStorage.getItem("local_storage"));
-    local_storage.push(e);
-    window.localStorage.setItem("local_storage", JSON.stringify(local_storage));   
+
+    const filter = (JSON.parse(window.localStorage.getItem("local_storage"))).filter(
+                        value => value === e
+                    );
+
+    if(filter.length === 0){
+      local_storage = JSON.parse(window.localStorage.getItem("local_storage"));
+      local_storage.push(e);
+      window.localStorage.setItem("local_storage", JSON.stringify(local_storage));   
+    }
   }
 
   updateSearch = async(e) => {
@@ -134,19 +141,14 @@ class App extends Component {
       isLoading: true,
     })
 
-    if(this.state.search !== ""){
-      await this.storeQuery(this.state.search);
-    }
-
-    console.log(this.state.search);
     let images = await this.LoadPics(this.state.search);
-    console.log(this.state.search);
 
     this.setState({
       isLoading: false,
       imagegallery : images,
     });
 
+    await this.storeQuery(this.state.search);
   }
 
   render() {
@@ -178,7 +180,7 @@ class App extends Component {
             </div>           
           }
 
-          <div className="content">
+          <div className="content" min-height="100vh" >
           <Content imagegallery={imagegallery}/>
           </div>
           

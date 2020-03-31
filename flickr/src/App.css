@@ -48,6 +48,8 @@
 
 .content{
     background-image: url(./images/background.png);
+    min-width: 100vw;
+    min-height: 100vh,
 }
 
 .zoomimages{
