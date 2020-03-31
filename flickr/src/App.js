@@ -30,6 +30,7 @@ class App extends Component {
     let URL = `https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=${API_KEY}&tags=${search}&page=${this.state.page}&format=json&nojsoncallback=1`;
     let res = await axios.get(URL);
     let data = await res.data.photos;
+    console.log(data);
     return data;
   }
 
@@ -43,7 +44,9 @@ class App extends Component {
         var imgsrcpath = `https://farm${pic.farm}.staticflickr.com/${pic.server}/${pic.id}_${pic.secret}.jpg`;
         return(
           <div key={pic.secret} className="images" onClick={() => this.show(imgsrcpath,pic.title)}>
-              <img key={ pic.farm + pic.secret + pic.id + pic.server} className="img" src={imgsrcpath} alt={pic.title} ></img>
+              <img 
+              key={ pic.farm + pic.secret + pic.id + pic.server +pic.owner + pic.isfriend + pic.isfamily + pic.title} 
+              className="img" src={imgsrcpath} alt={pic.title} ></img>
           </div>
         )
       })
@@ -80,7 +83,7 @@ class App extends Component {
   };
 
   async componentDidMount(){
-      let images = await this.LoadPics("cats");
+      let images = await this.LoadPics(("cats"));
       this.setState({
         search: "cats",
         isLoading: false,
@@ -101,6 +104,18 @@ class App extends Component {
     this.setState({ visible: false });
   }
 
+  storeQuery = async(e) => {
+    let local_storage = [];
+    if (!window.localStorage.getItem("local_storage")) {   
+      local_storage.push(e);
+      window.localStorage.setItem("local_storage", JSON.stringify(local_storage));
+      return;
+    }
+    local_storage = JSON.parse(window.localStorage.getItem("local_storage"));
+    local_storage.push(e);
+    window.localStorage.setItem("local_storage", JSON.stringify(local_storage));   
+  }
+
   updateSearch = async(e) => {
 
     if(e.target.value === ""){
@@ -119,13 +134,19 @@ class App extends Component {
       isLoading: true,
     })
 
+    if(this.state.search !== ""){
+      await this.storeQuery(this.state.search);
+    }
+
     console.log(this.state.search);
     let images = await this.LoadPics(this.state.search);
+    console.log(this.state.search);
 
     this.setState({
       isLoading: false,
       imagegallery : images,
     });
+
   }
 
   render() {
