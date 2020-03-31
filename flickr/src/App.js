@@ -35,6 +35,7 @@ class App extends Component {
     let res = await axios.get(URL);
     let data = await res.data.photos;
     console.log(data);
+    console.log(this.state.search + "<=check=>" + search);
     return data;
   }
 
@@ -128,21 +129,18 @@ class App extends Component {
     
   }
 
-  updateSearch = async(e) => {
-
-    console.log("check-1");
+  updateSearch = async(_event, { newValue }) => {
     this.setState({
-      value: e.target.value,
+      value: newValue,
     });
-    console.log(this.state.value);
 
-    if(e.target.value === ""){
-      await this.setState({
+    if(newValue === ""){
+      this.setState({
         search: "cats",
       });
     }else{
-      await this.setState({ 
-        search: e.target.value, 
+      this.setState({ 
+        search: newValue, 
       });
     }
 
@@ -166,8 +164,6 @@ class App extends Component {
 
     const {isLoading,imagegallery,visible,value} = this.state;
 
-    const {update} = this.updateSearch;
-
     return (
       <div className="app-container">
 
@@ -175,6 +171,7 @@ class App extends Component {
                 <header>
                     <label htmlFor="searching" className="container">
                         <Autosuggest
+                            
                             inputProps = {{
                                 placeholder : "Type something to search..." ,
                                 type : "text",
@@ -182,9 +179,36 @@ class App extends Component {
                                 className : "searchbar",
                                 autoComplete : "abcd",
                                 id : "searching",
-                                onChange : update,
+                                autoFocus: "autoFocus",
+                                onChange : this.updateSearch,
                             }}
+                            
                             suggestions={this.state.suggestions}
+                            
+                            onSuggestionsFetchRequested={ async ({value}) => {
+                                if(!value){
+                                  this.setState({
+                                      suggestions : [],
+                                  });
+                                }
+                                else{
+                                  this.setState({
+                                    suggestions : JSON.parse(window.localStorage.getItem("local_storage")),
+                                });
+                                }
+                            }}
+                            
+                            onSuggestionsClearRequested={() => {
+                              this.setState({
+                                suggestions : [],
+                              });
+                            }}
+                            
+                            getSuggestionValue={suggestion => suggestion}
+
+                            renderSuggestion={ suggestion =>
+                                <div> {suggestion} </div>
+                            }
                         />
                     </label>
                 </header>
