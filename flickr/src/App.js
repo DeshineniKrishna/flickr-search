@@ -43,7 +43,7 @@ class App extends Component {
         var imgsrcpath = `https://farm${pic.farm}.staticflickr.com/${pic.server}/${pic.id}_${pic.secret}.jpg`;
         return(
           <div key={pic.secret} className="images" onClick={() => this.show(imgsrcpath,pic.title)}>
-              <img key={pic.secret + pic.id} className="img" src={imgsrcpath} alt={pic.title} ></img>
+              <img key={ pic.farm + pic.secret + pic.id + pic.server} className="img" src={imgsrcpath} alt={pic.title} ></img>
           </div>
         )
       })
@@ -60,20 +60,21 @@ class App extends Component {
     });
 
     let imageArray = await this.LoadPics(this.state.search);
-    if (imageArray) {
+    if(imageArray){
       let newArray = this.state.imagegallery.concat(imageArray);
       this.setState({
         imagegallery: newArray,
         isLoading: false,
       });
+    }else{
+      this.setState({
+        isLoading: false,
+      });      
     }
   };
 
   handleScroll = () => {
-    if (
-      window.innerHeight + window.scrollY + 1000 >=
-      document.body.offsetHeight
-    ) {
+    if( window.innerHeight + window.scrollY + 1000 >= document.body.offsetHeight ) {
       this.loadMore();
     }
   };
@@ -102,18 +103,21 @@ class App extends Component {
 
   updateSearch = async(e) => {
 
-    await this.setState({ 
-      search: e.target.value, 
+    if(e.target.value === ""){
+      await this.setState({
+        search: "cats",
+      });
+    }else{
+      await this.setState({ 
+        search: e.target.value, 
+      });
+    }
+
+    await this.setState({
       imagegallery : [],
       page : 1,
       isLoading: true,
-    });
-
-    if(this.state.search === ""){
-      this.setState({
-        search: "cats",
-      });
-    }
+    })
 
     console.log(this.state.search);
     let images = await this.LoadPics(this.state.search);
