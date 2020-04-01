@@ -1,15 +1,15 @@
 import React, { Component } from 'react'
 import './App.css';
 import axios from 'axios';
-
+import Loader from './images/loader.gif';
+import Headroom from 'react-headroom';
 // import Header from './components/Header/Index';
 import Content from './components/Content/Index';
 import Modal from './components/Modal/Modal';
-import Loader from './images/loader.gif';
-import Headroom from 'react-headroom';
-import Autosuggest from 'react-autosuggest';
+import RenderSuggestions from './components/Suggestions/RenderSuggestions';
 
 const API_KEY = "ddc5d1ba3cdaab1b91800104a69f31eb";
+var option2 = [];
 
 class App extends Component {
 
@@ -26,7 +26,8 @@ class App extends Component {
        page : 1,
        search:"",
        suggestions: [],
-       value : "",
+       items : [],
+       text : "",
     }
   }
 
@@ -34,7 +35,6 @@ class App extends Component {
     let URL = `https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=${API_KEY}&tags=${search}&page=${this.state.page}&format=json&nojsoncallback=1`;
     let res = await axios.get(URL);
     let data = await res.data.photos;
-    console.log(data);
     console.log(this.state.search + "<=check=>" + search);
     return data;
   }
@@ -90,9 +90,9 @@ class App extends Component {
   async componentDidMount(){
       let images = await this.LoadPics(("cats"));
       this.setState({
-        search: "cats",
         isLoading: false,
         imagegallery : images,
+        search: "cats",
       });
       window.addEventListener("scroll", this.handleScroll);  
   }
@@ -126,21 +126,20 @@ class App extends Component {
       local_storage.push(e);
       window.localStorage.setItem("local_storage", JSON.stringify(local_storage));   
     }
-    
   }
 
-  updateSearch = async(_event, { newValue }) => {
+  updateSearch = async(newValue) => {
     this.setState({
-      value: newValue,
+      text: newValue.target.value,
     });
 
-    if(newValue === ""){
+    if(newValue.target.value === ""){
       this.setState({
         search: "cats",
       });
     }else{
       this.setState({ 
-        search: newValue, 
+        search: newValue.target.value, 
       });
     }
 
@@ -157,63 +156,64 @@ class App extends Component {
       imagegallery : images,
     });
 
-    await this.storeQuery(this.state.search);
+    let suggestions = [];
+    if(this.state.search !== "cats"){
+      const regex =new RegExp(`${this.state.search}` , 'i');
+      suggestions = this.state.items.sort().filter(v => regex.test(v));
+    }
+    this.setState({suggestions});
+
+    let option1 = [];
+    option1 = await this.state.search;
+
+    option2.push(option1)
+
+    let uniqueOptions = [...new Set(option2)];
+
+    this.setState({
+        items : uniqueOptions,
+    });
+
+    // await this.storeQuery(this.state.search);
+  }
+
+  suggestionSelected = async(e) =>{
+    this.setState({
+      text : e,
+      suggestions : [],
+    });
+    await this.updateSearch(this.state.text);
   }
 
   render() {
 
-    const {isLoading,imagegallery,visible,value} = this.state;
+    const {isLoading,imagegallery,visible} = this.state;
 
     return (
       <div className="app-container">
 
-            <Headroom className="headroom">
-                <header>
-                    <label htmlFor="searching" className="container">
-                        <Autosuggest
-                            
-                            inputProps = {{
-                                placeholder : "Type something to search..." ,
-                                type : "text",
-                                value,
-                                className : "searchbar",
-                                autoComplete : "abcd",
-                                id : "searching",
-                                autoFocus: "autoFocus",
-                                onChange : this.updateSearch,
-                            }}
-                            
-                            suggestions={this.state.suggestions}
-                            
-                            onSuggestionsFetchRequested={ async ({value}) => {
-                                if(!value){
-                                  this.setState({
-                                      suggestions : [],
-                                  });
-                                }
-                                else{
-                                  this.setState({
-                                    suggestions : JSON.parse(window.localStorage.getItem("local_storage")),
-                                });
-                                }
-                            }}
-                            
-                            onSuggestionsClearRequested={() => {
-                              this.setState({
-                                suggestions : [],
-                              });
-                            }}
-                            
-                            getSuggestionValue={suggestion => suggestion}
+          <Headroom className="headroom">
+              <header>
+                  <label htmlFor="searching" className="container">
+                    <input
+                          placeholder = "Type something to search..." 
+                          type = "text"
+                          className= "searchbar"
+                          onChange = {this.updateSearch}
+                          value = {this.state.text}
+                    />             
+                  {/* <ul>
+                      {this.state.suggestions.map((item) => <li onClick={() => this.suggestionSelected(item)}>{item}</li>)}
+                  </ul> */}
+                  </label>
+              </header>
+          </Headroom>
 
-                            renderSuggestion={ suggestion =>
-                                <div> {suggestion} </div>
-                            }
-                        />
-                    </label>
-                </header>
-            </Headroom>
-          
+          <RenderSuggestions 
+              suggestions = {this.state.suggestions} 
+              suggestselect = {this.suggestionSelected}
+          /> 
+
           {  isLoading && 
             <div className="Loading">
                 <img src={Loader} alt="Loading..."/>
@@ -234,4 +234,4 @@ class App extends Component {
   }
 }
 
-export default App
+export default App;
