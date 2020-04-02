@@ -6,6 +6,8 @@ ul{
     font-weight: 300;
     font-size: 18px;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    position: relative;
+    bottom: 20px;
 }
 
 li{
@@ -20,4 +22,6 @@ li{
 
 li:hover{
     text-decoration: underline;
+    background: rgb(2,0,36);
+    background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(232,243,164,1) 0%);
 }

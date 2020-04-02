@@ -2,14 +2,14 @@ import React, { Component } from 'react'
 import './App.css';
 import axios from 'axios';
 import Loader from './images/loader.gif';
-import Headroom from 'react-headroom';
-// import Header from './components/Header/Index';
+
 import Content from './components/Content/Index';
 import Modal from './components/Modal/Modal';
 import RenderSuggestions from './components/Suggestions/RenderSuggestions';
+import Header from './components/Header/Index';
 
 const API_KEY = "ddc5d1ba3cdaab1b91800104a69f31eb";
-var option2 = [];
+var key=0;
 
 class App extends Component {
 
@@ -46,14 +46,17 @@ class App extends Component {
     });
     if(this.state.data){
       let picArr = this.state.data.photo.map((pic) => {
-        var imgsrcpath = `https://farm${pic.farm}.staticflickr.com/${pic.server}/${pic.id}_${pic.secret}.jpg`;
-        return(
-          <div key={pic.secret} className="images" onClick={() => this.show(imgsrcpath,pic.title)}>
-              <img 
-              key={ pic.farm + pic.secret + pic.id + pic.server +pic.owner + pic.isfriend + pic.isfamily + pic.title} 
-              className="img" src={imgsrcpath} alt={pic.title} ></img>
-          </div>
-        )
+        key++;
+        if(pic.farm !== 0){
+          var imgsrcpath = `https://farm${pic.farm}.staticflickr.com/${pic.server}/${pic.id}_${pic.secret}.jpg`;
+          return(
+            <div key={key} className="images" onClick={() => this.show(imgsrcpath,pic.title)}>
+                <img 
+                key={key} 
+                className="img" src={imgsrcpath} alt={pic.title} ></img>
+            </div>
+          )
+        }return null;
       })
       return picArr;
     }else{
@@ -94,19 +97,18 @@ class App extends Component {
         imagegallery : images,
         search: "cats",
       });
+
+      let option =[];
+      option = JSON.parse(window.localStorage.getItem("local_storage"));
+  
+      this.setState({
+          items : option,
+      });
       window.addEventListener("scroll", this.handleScroll);  
   }
 
   componentWillUnmount() {
     window.removeEventListener("scroll", this.handleScroll);
-  }
-
-  show = (imgsrcpath,title) => {
-    this.setState({ visible: true , imgsource : imgsrcpath, imagetitle : title });
-  }
- 
-  hide() {
-    this.setState({ visible: false });
   }
 
   storeQuery = async(e) => {
@@ -128,20 +130,7 @@ class App extends Component {
     }
   }
 
-  updateSearch = async(newValue) => {
-    this.setState({
-      text: newValue.target.value,
-    });
-
-    if(newValue.target.value === ""){
-      this.setState({
-        search: "cats",
-      });
-    }else{
-      this.setState({ 
-        search: newValue.target.value, 
-      });
-    }
+  async updateSearch(){
 
     await this.setState({
       imagegallery : [],
@@ -157,32 +146,48 @@ class App extends Component {
     });
 
     let suggestions = [];
-    if(this.state.search !== "cats"){
+    if(this.state.search !== "" && this.state.items !== null){
       const regex =new RegExp(`${this.state.search}` , 'i');
       suggestions = this.state.items.sort().filter(v => regex.test(v));
     }
     this.setState({suggestions});
 
-    let option1 = [];
-    option1 = await this.state.search;
+    await this.storeQuery(this.state.search);
 
-    option2.push(option1)
-
-    let uniqueOptions = [...new Set(option2)];
+    let option =[];
+    option = JSON.parse(window.localStorage.getItem("local_storage"));
 
     this.setState({
-        items : uniqueOptions,
+        items : option,
     });
 
-    // await this.storeQuery(this.state.search);
   }
 
-  suggestionSelected = async(e) =>{
+  show = (imgsrcpath,title) => {
+    this.setState({ visible: true , imgsource : imgsrcpath, imagetitle : title });
+  }
+ 
+  hide() {
+    this.setState({ visible: false });
+  }
+
+  startSearch = async(newValue) => {
     this.setState({
-      text : e,
-      suggestions : [],
+      text: newValue.target.value,
+      search: newValue.target.value,
     });
-    await this.updateSearch(this.state.text);
+    await this.updateSearch();
+  }
+  
+  SelectSuggestions = async(newValue) => {
+    this.setState({
+      text: newValue,
+      search: newValue,
+    });
+    await this.updateSearch();
+    this.setState({
+      suggestions : [],
+    })
   }
 
   render() {
@@ -192,26 +197,16 @@ class App extends Component {
     return (
       <div className="app-container">
 
-          <Headroom className="headroom">
-              <header>
-                  <label htmlFor="searching" className="container">
-                    <input
-                          placeholder = "Type something to search..." 
-                          type = "text"
-                          className= "searchbar"
-                          onChange = {this.updateSearch}
-                          value = {this.state.text}
-                    />             
-                  {/* <ul>
-                      {this.state.suggestions.map((item) => <li onClick={() => this.suggestionSelected(item)}>{item}</li>)}
-                  </ul> */}
-                  </label>
-              </header>
-          </Headroom>
+          <div>
+            <Header
+                onChange = {this.startSearch}
+                value = {this.state.text}
+            />
+          </div>
 
           <RenderSuggestions 
               suggestions = {this.state.suggestions} 
-              suggestselect = {this.suggestionSelected}
+              suggestselect = {this.SelectSuggestions}
           /> 
 
           {  isLoading && 
