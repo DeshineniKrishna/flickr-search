@@ -3,6 +3,7 @@
     grid-template-columns: auto;
     justify-content: center;
     align-items: center;
+    background: url('../../images/background.gif');
 }
 
 @media only screen and (min-width: 658px) {

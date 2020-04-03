@@ -2,6 +2,8 @@ import React, { Component } from 'react'
 import './App.css';
 import axios from 'axios';
 import Loader from './images/loader.gif';
+import notfound from './images/notfound.gif'
+import { debounce } from 'lodash';
 
 import Content from './components/Content/Index';
 import Modal from './components/Modal/Modal';
@@ -9,7 +11,6 @@ import RenderSuggestions from './components/Suggestions/RenderSuggestions';
 import Header from './components/Header/Index';
 
 const API_KEY = "ddc5d1ba3cdaab1b91800104a69f31eb";
-var key=0;
 
 class App extends Component {
 
@@ -28,6 +29,7 @@ class App extends Component {
        suggestions: [],
        items : [],
        text : "",
+       key : 0,
     }
   }
 
@@ -35,7 +37,6 @@ class App extends Component {
     let URL = `https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=${API_KEY}&tags=${search}&page=${this.state.page}&format=json&nojsoncallback=1`;
     let res = await axios.get(URL);
     let data = await res.data.photos;
-    console.log(this.state.search + "<=check=>" + search);
     return data;
   }
 
@@ -44,21 +45,37 @@ class App extends Component {
     this.setState({
       data:data,
     });
+
     if(this.state.data){
-      let picArr = this.state.data.photo.map((pic) => {
-        key++;
-        if(pic.farm !== 0){
-          var imgsrcpath = `https://farm${pic.farm}.staticflickr.com/${pic.server}/${pic.id}_${pic.secret}.jpg`;
-          return(
-            <div key={key} className="images" onClick={() => this.show(imgsrcpath,pic.title)}>
-                <img 
-                key={key} 
-                className="img" src={imgsrcpath} alt={pic.title} ></img>
-            </div>
-          )
-        }return null;
-      })
-      return picArr;
+      if(this.state.data.photo.length > 0){
+        let picArr = this.state.data.photo.map((pic) => {
+          this.setState({key: this.state.key+1});
+          if(pic.farm !== 0){
+            var imgsrcpath = `https://farm${pic.farm}.staticflickr.com/${pic.server}/${pic.id}_${pic.secret}.jpg`;
+            return(
+              <div key={this.state.key} className="images" onClick={() => this.show(imgsrcpath,pic.title)}>
+                  <img 
+                  key={this.state.key} 
+                  className="img" src={imgsrcpath} alt={pic.title} ></img>
+              </div>
+            )
+          }else{
+            return null;
+          }
+        })
+        return picArr;
+      }else{
+        return(
+          <div>
+            <h5>
+                Your search -{" "}
+                <span style={{ fontWeight: 800 }}>{this.state.search}</span> -
+                did not match any tags.
+            </h5>
+            <img src={notfound} alt="notfound" />
+          </div>
+        )
+      }
     }else{
       return null;
     }
@@ -130,7 +147,7 @@ class App extends Component {
     }
   }
 
-  async updateSearch(){
+  updateSearch = debounce(async(num) =>{
 
     await this.setState({
       imagegallery : [],
@@ -150,7 +167,9 @@ class App extends Component {
       const regex =new RegExp(`${this.state.search}` , 'i');
       suggestions = this.state.items.sort().filter(v => regex.test(v));
     }
-    this.setState({suggestions});
+    this.setState({
+      suggestions: suggestions.slice(0,4),
+    });
 
     await this.storeQuery(this.state.search);
 
@@ -161,6 +180,28 @@ class App extends Component {
         items : option,
     });
 
+    if(num === 1){
+      this.setState({
+        suggestions : [],
+      });
+    }
+
+  },1000);
+
+  startSearch = async(newValue) => {
+    this.setState({
+      text: newValue.target.value,
+      search: newValue.target.value,
+    });
+    await this.updateSearch(0);
+  }
+
+  SelectSuggestions = async(newValue) => {
+    this.setState({
+      text: newValue,
+      search: newValue,
+    });
+    await this.updateSearch(1);
   }
 
   show = (imgsrcpath,title) => {
@@ -171,28 +212,9 @@ class App extends Component {
     this.setState({ visible: false });
   }
 
-  startSearch = async(newValue) => {
-    this.setState({
-      text: newValue.target.value,
-      search: newValue.target.value,
-    });
-    await this.updateSearch();
-  }
-  
-  SelectSuggestions = async(newValue) => {
-    this.setState({
-      text: newValue,
-      search: newValue,
-    });
-    await this.updateSearch();
-    this.setState({
-      suggestions : [],
-    })
-  }
-
   render() {
 
-    const {isLoading,imagegallery,visible} = this.state;
+    const {isLoading,imagegallery,visible,text,suggestions,imgsource,imagetitle} = this.state;
 
     return (
       <div className="app-container">
@@ -200,12 +222,12 @@ class App extends Component {
           <div>
             <Header
                 onChange = {this.startSearch}
-                value = {this.state.text}
+                value = {text}
             />
           </div>
 
           <RenderSuggestions 
-              suggestions = {this.state.suggestions} 
+              suggestions = {suggestions} 
               suggestselect = {this.SelectSuggestions}
           /> 
 
@@ -221,7 +243,7 @@ class App extends Component {
 
           <Modal 
                  visible={visible} onClose={this.hide.bind(this)}
-                 src={this.state.imgsource} alt={this.state.imagetitle}
+                 src={imgsource} alt={imagetitle}
           />
 
       </div>

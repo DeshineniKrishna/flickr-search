@@ -1,6 +1,4 @@
 .zoomimages{
-    /* width: 80%;
-    height: 80%; */
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -9,9 +7,6 @@
 }
 
 .imageszoomed{
-    /* width: 60%;
-    height: 60%;
-    object-fit: cover; */
     border-style: none;
 }
 

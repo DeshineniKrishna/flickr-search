@@ -24,7 +24,6 @@ header{
     box-shadow: rgba(255, 255, 255, 0.4) 0px 6px 8px;
     outline: none;
     margin: 0px;
-    /* background: radial-gradient(#e5e5e5,#ffff,#e5e5e5); */
     background: rgb(2,0,36);
     background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(47,155,155,1) 0%);
 }

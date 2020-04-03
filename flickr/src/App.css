@@ -8,7 +8,6 @@
     height: 300px;
     box-shadow: 5px 10px;
     text-align: center;
-    /* display: table-cell; */
     cursor: pointer;
     vertical-align: middle;
     box-shadow: 0 1px 3px rgba(0,0,0,.12), 0 1px 2px rgba(0,0,0,.24);
@@ -28,7 +27,6 @@
     height: 100%;
     width: 100%;
     border-radius: 4px;
-    /* animation-name: gracefulimage; */
     animation-duration: 0.3s;
     animation-iteration-count: 1;
     animation-timing-function: ease-in;
@@ -48,4 +46,8 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
+}
+
+h5{
+    background: azure;
 }
