@@ -66,13 +66,13 @@ class App extends Component {
         return picArr;
       }else{
         return(
-          <div>
+          <div className="NotFound">
             <h5>
                 Your search -{" "}
                 <span style={{ fontWeight: 800 }}>{this.state.search}</span> -
                 did not match any tags.
             </h5>
-            <img src={notfound} alt="notfound" />
+            <img width="100vw" height="100vh" src={notfound} alt="notfound" />
           </div>
         )
       }
